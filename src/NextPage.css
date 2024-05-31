@@ -2,8 +2,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-color: #E0E7FF; /* You can change this color if needed */
+  height: 110vh;
+  background-color: #E0E7FF; 
+
 }
 
   .login-image {
@@ -34,7 +35,7 @@
     align-items: center;
     justify-content: center;
     background-color: #7886C1; /* Sets the background color */
-    padding: 110px; /* Adds padding around the image */
+    padding: 100px; /* Adds padding around the image */
     border-radius: 20px;
   }
   

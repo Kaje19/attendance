@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import adminImage from '../src/admin.png'; // Adjust the path based on your structure
 import './NextPage.css';
 
@@ -6,10 +7,18 @@ function NextPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    // Perform your login logic here
     console.log('Login Attempt:', username, password, rememberMe);
+    // On successful login, navigate to the Home component
+    if (username === 'admin' && password === 'password') { // Replace with your actual login validation
+      navigate('/home');
+    } else {
+      alert('Invalid login credentials');
+    }
   };
 
   return (

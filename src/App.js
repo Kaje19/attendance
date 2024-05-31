@@ -1,7 +1,8 @@
 import React from 'react';
-import { useNavigate, Routes, Route } from 'react-router-dom'; // Import Routes and Route
+import { useNavigate, Routes, Route } from 'react-router-dom';
 import './App.css';
 import logo from './logo.svg';
+import Home from './Home'; // Import the Home component from src directory
 import NextPage from './NextPage'; // Import the new page component
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         </div>
       }/>
       <Route path="/next" element={<NextPage />} />
+      <Route path="/home" element={<Home />} /> {/* Add the route for Home */}
     </Routes>
   );
 }
