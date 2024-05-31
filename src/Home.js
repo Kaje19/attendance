@@ -12,6 +12,14 @@ function Home() {
         // More students can be added here
     ]);
 
+    const [finedStudents, setFinedStudents] = useState([
+        { id: 1, name: 'Alice Johnson', course: 'BSIT', yearLevel: 'IV', result: 'Fined' }
+    ]);
+
+    const [unfinedStudents, setUnfinedStudents] = useState([
+        { id: 2, name: 'Bob Smith', course: 'BSCS', yearLevel: 'III', result: 'Unfined' }
+    ]);
+
     const addEvent = () => {
         const newId = events.length + 1;
         const newEvent = { id: newId, name: '', venue: '', date: '', time: '' };
@@ -38,7 +46,7 @@ function Home() {
                         <button type="button" onClick={addEvent}>Add Event</button>
                     </form>
                 </aside>
-                <div className="student-attendance-container"> {/* Encapsulation starts here */}
+                <div className="student-attendance-container">
                     <div className="student-attendance">
                         <h2>List of Attendance of Students</h2>
                         <table className="table">
@@ -62,6 +70,55 @@ function Home() {
                                             <button className="action-buttons edit-button">Edit</button>
                                             <button className="action-buttons delete-button">Delete</button>
                                         </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {/* Fined and Unfined Students List */}
+                <div className="fines-section">
+                    <div className="fines-list">
+                        <h2>List of Fined Students</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Course</th>
+                                    <th>Year Level</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {finedStudents.map(student => (
+                                    <tr key={student.id}>
+                                        <td>{student.name}</td>
+                                        <td>{student.course}</td>
+                                        <td>{student.yearLevel}</td>
+                                        <td>{student.result}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="fines-list">
+                        <h2>List of Unfined Students</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Course</th>
+                                    <th>Year Level</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {unfinedStudents.map(student => (
+                                    <tr key={student.id}>
+                                        <td>{student.name}</td>
+                                        <td>{student.course}</td>
+                                        <td>{student.yearLevel}</td>
+                                        <td>{student.result}</td>
                                     </tr>
                                 ))}
                             </tbody>

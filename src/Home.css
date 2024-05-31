@@ -87,3 +87,31 @@ button {
     margin-top: 10px;
     width: 100%;
 }
+
+.fines-section {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f0f0f0; /* Light grey background for visual separation */
+    padding: 20px;
+    margin-top: 20px; /* Ensure there's space between this and previous sections */
+}
+
+.fines-list {
+    width: 45%; /* Each table takes nearly half the width of the container */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Slight shadow for depth */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd; /* Light grey line for row separation */
+}
