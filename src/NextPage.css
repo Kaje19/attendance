@@ -1,0 +1,63 @@
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #E0E7FF; /* You can change this color if needed */
+}
+
+  .login-image {
+    flex: 1; /* Takes half of the container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .login-form-container {
+    flex: 1; /* Takes the other half */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 90px;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Full width of its container */
+    max-width: 500px; /* Maximum width of the form */
+    padding: 50px;
+  }
+  .login-image {
+    flex: 1; /* Takes half of the container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #7886C1; /* Sets the background color */
+    padding: 110px; /* Adds padding around the image */
+    border-radius: 20px;
+  }
+  
+  .login-form input[type="text"],
+  .login-form input[type="password"] {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #2d39aa;
+  }
+  
+  .login-form button {
+    padding: 10px;
+    background-color: #4B9CD3; /* Blue color */
+    color: white;
+    border: none;
+    border-radius: 60px;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .login-container {
+      flex-direction: column;
+    }
+  }
+  
