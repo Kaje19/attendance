@@ -4,6 +4,8 @@ import './Home.css';
 function Home() {
     const [events, setEvents] = useState([]);
     const [students, setStudents] = useState([]);
+    const [finedStudents, setFinedStudents] = useState([]);
+    const [unfinedStudents, setUnfinedStudents] = useState([]);
     const [showAddEventPopup, setShowAddEventPopup] = useState(false);
     const [showEditStudentPopup, setShowEditStudentPopup] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState(null);
@@ -23,14 +25,21 @@ function Home() {
             .catch(error => console.error('Error fetching student list:', error));
     }, []);
 
-    const [finedStudents, setFinedStudents] = useState([
-        { id: 1, name: 'Alice Johnson', course: 'BSIT', yearLevel: 'IV', result: 'Fined' }
-    ]);
+    useEffect(() => {
+        fetch('http://localhost:3001/api/students/fined')
+            .then(response => response.json())
+            .then(data => setFinedStudents(data))
+            .catch(error => console.error('Error fetching fined students:', error));
+    }, []);
+    
+    useEffect(() => {
+        fetch('http://localhost:3001/api/students/unfined')
+            .then(response => response.json())
+            .then(data => setUnfinedStudents(data))
+            .catch(error => console.error('Error fetching unfined students:', error));
+    }, []);
 
-    const [unfinedStudents, setUnfinedStudents] = useState([
-        { id: 2, name: 'Bob Smith', course: 'BSCS', yearLevel: 'III', result: 'Unfined' }
-    ]);
-
+    
     const [newEvent, setNewEvent] = useState({ name: '', venue: '', date: '', time: '' });
 
     const handleAddEvent = () => {
@@ -65,6 +74,7 @@ function Home() {
         const { name, value } = e.target;
         setNewEvent({ ...newEvent, [name]: value });
     };
+
 
     const handleEditStudent = (student) => {
         setEditedStudent({ ...student });
@@ -191,10 +201,10 @@ function Home() {
                             </thead>
                             <tbody>
                                 {finedStudents.map(student => (
-                                    <tr key={student.id}>
-                                        <td>{student.name}</td>
-                                        <td>{student.course}</td>
-                                        <td>{student.yearLevel}</td>
+                                    <tr key={student.stud_ID}>
+                                        <td>{student.stud_Name}</td>
+                                        <td>{student.stud_Course}</td>
+                                        <td>{student.stud_yLevel}</td>
                                         <td>{student.result}</td>
                                     </tr>
                                 ))}
@@ -214,10 +224,10 @@ function Home() {
                             </thead>
                             <tbody>
                                 {unfinedStudents.map(student => (
-                                    <tr key={student.id}>
-                                        <td>{student.name}</td>
-                                        <td>{student.course}</td>
-                                        <td>{student.yearLevel}</td>
+                                    <tr key={student.stud_ID}>
+                                        <td>{student.stud_Name}</td>
+                                        <td>{student.stud_Course}</td>
+                                        <td>{student.stud_yLevel}</td>
                                         <td>{student.result}</td>
                                     </tr>
                                 ))}

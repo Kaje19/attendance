@@ -77,6 +77,28 @@ app.get('/api/students', (req, res) => {
   });
 });
 
+// Get fined and unfined students
+app.get('/api/students/fined', (req, res) => {
+  const sql = "SELECT students.*, 'FINED' AS result FROM students WHERE (SELECT COUNT(events.event_ID) FROM events) != students.stud_Attend;";
+  db.query(sql, (err, results) => {
+      if (err) {
+          return res.status(500).send(err);
+      }
+      res.json(results);
+  });
+});
+
+app.get('/api/students/unfined', (req, res) => {
+  const sql = "SELECT students.*, 'UNFINED' AS result FROM students WHERE (SELECT COUNT(events.event_ID) FROM events) = students.stud_Attend;";
+  db.query(sql, (err, results) => {
+      if (err) {
+          return res.status(500).send(err);
+      }
+      res.json(results);
+  });
+});
+
+
 //updateStudent endpoint
 app.put('/api/students/:id', (req, res) => {
   const studentId = req.params.id;
