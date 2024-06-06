@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Home.css';
 
 function Home() {
-    const [events, setEvents] = useState([
-        { id: 1, name: 'Winter Spades Tournament', venue: 'Guild Hall', date: '2024-06-05', time: '19:00' },
-        { id: 2, name: 'Summer Euchre Bash', venue: 'Beach Resort', date: '2024-06-12', time: '16:00' },
-    ]);
+    const [events, setEvents] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3001/api/events')
+            .then(response => response.json())
+            .then(data => setEvents(data))
+            .catch(error => console.error('Error fetching events:', error));
+    }, []);
 
     const [students, setStudents] = useState([
         { id: 1, name: 'Kristine Joy E. Pacatang', course: 'BSIT', yearLevel: 'III', attendanceCount: 3 },
@@ -20,10 +24,40 @@ function Home() {
         { id: 2, name: 'Bob Smith', course: 'BSCS', yearLevel: 'III', result: 'Unfined' }
     ]);
 
-    const addEvent = () => {
-        const newId = events.length + 1;
-        const newEvent = { id: newId, name: '', venue: '', date: '', time: '' };
-        setEvents([...events, newEvent]);
+    const [showPopup, setShowPopup] = useState(false);
+    const [newEvent, setNewEvent] = useState({ name: '', venue: '', date: '', time: '' });
+
+    const handleAddEvent = () => {
+        setNewEvent({ name: '', venue: '', date: '', time: '' });
+        setShowPopup(true);
+    };
+
+    const handleSaveEvent = async () => {
+        try {
+            const response = await fetch('http://localhost:3001/api/events', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newEvent),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to add event');
+            }
+
+            const result = await response.text();
+            console.log(result);
+    
+            setEvents([...events, newEvent]);
+            setShowPopup(false);
+        } catch (error) {
+            console.error('Error adding event:', error);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewEvent({ ...newEvent, [name]: value });
     };
 
     return (
@@ -37,13 +71,13 @@ function Home() {
                     <form>
                         {events.map((event, index) => (
                             <div key={index} className="event-entry">
-                                <input type="text" value={event.name} placeholder="Event Name" />
-                                <input type="text" value={event.venue} placeholder="Venue" />
-                                <input type="date" value={event.date} />
-                                <input type="time" value={event.time} />
+                                <input type="text" value={event.event_Name} placeholder="Event Name" readOnly />
+                                <input type="text" value={event.event_Loc} placeholder="Venue" readOnly />
+                                <input type="date" value={event.event_Date} readOnly />
+                                <input type="time" value={event.event_Time} readOnly />
                             </div>
                         ))}
-                        <button type="button" onClick={addEvent}>Add Event</button>
+                        <button type="button" onClick={handleAddEvent}>Add Event</button>
                     </form>
                 </aside>
                 <div className="student-attendance-container">
@@ -129,6 +163,42 @@ function Home() {
             <footer className="footer">
                 <p>ALL STUDENTS ARE REQUIRED TO HAVE 5 EVENTS!</p>
             </footer>
+            
+            {showPopup && (
+                <div className="popup">
+                    <div className="popup-content">
+                        <h2>Add New Event</h2>
+                        <input 
+                            type="text" 
+                            name="name" 
+                            value={newEvent.name} 
+                            onChange={handleInputChange} 
+                            placeholder="Event Name" 
+                        />
+                        <input 
+                            type="text" 
+                            name="venue" 
+                            value={newEvent.venue} 
+                            onChange={handleInputChange} 
+                            placeholder="Venue" 
+                        />
+                        <input 
+                            type="date" 
+                            name="date" 
+                            value={newEvent.date} 
+                            onChange={handleInputChange} 
+                        />
+                        <input 
+                            type="time" 
+                            name="time" 
+                            value={newEvent.time} 
+                            onChange={handleInputChange} 
+                        />
+                        <button onClick={handleSaveEvent}>Save</button>
+                        <button onClick={() => setShowPopup(false)}>Cancel</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

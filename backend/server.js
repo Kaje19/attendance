@@ -27,6 +27,7 @@ db.connect(err => {
   console.log('Connected to database.');
 });
 
+//Login endpoint
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     const query = 'SELECT * FROM admin WHERE admin_Username = ? AND admin_Password = ?';
@@ -39,6 +40,29 @@ app.post('/api/login', (req, res) => {
       } else {
         res.json({ success: false });
       }
+  });
+});
+
+//getEvents endpoint
+app.get('/api/events', (req, res) => {
+  const sql = 'SELECT * FROM events';
+  db.query(sql, (err, results) => {
+      if (err) {
+          return res.status(500).send(err);
+      }
+      res.json(results);
+  });
+});
+
+//addEvent endpoint
+app.post('/api/events', (req, res) => {
+  const { name, venue, date, time } = req.body;
+  const sql = 'INSERT INTO events (event_Name, event_Loc, event_Date, event_Time) VALUES (?, ?, ?, ?)';
+  db.query(sql, [name, venue, date, time], (err, result) => {
+      if (err) {
+        return res.status(500).send(body);
+      }
+      res.status(201).send('Event added.');
   });
 });
 
