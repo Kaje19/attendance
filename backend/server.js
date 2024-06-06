@@ -66,6 +66,42 @@ app.post('/api/events', (req, res) => {
   });
 });
 
+//getStudents endpoint
+app.get('/api/students', (req, res) => {
+  const sql = 'SELECT * FROM students';
+  db.query(sql, (err, results) => {
+      if (err) {
+          return res.status(500).send(err);
+      }
+      res.json(results);
+  });
+});
+
+//updateStudent endpoint
+app.put('/api/students/:id', (req, res) => {
+  const studentId = req.params.id;
+  const { stud_Name, stud_Course, stud_yLevel, stud_Attend } = req.body;
+  const sql = 'UPDATE students SET stud_Name = ?, stud_Course = ?, stud_yLevel = ?, stud_Attend = ? WHERE stud_ID = ?';
+  db.query(sql, [stud_Name, stud_Course, stud_yLevel, stud_Attend, studentId], (err, result) => {
+      if (err) {
+          return res.status(500).send(err);
+      }
+      res.status(200).send('Student information updated successfully.');
+  });
+});
+
+//deleteStudent endpoint
+app.delete('/api/students/:id', (req, res) => {
+  const studentId = req.params.id;
+  const sql = 'DELETE FROM students WHERE stud_ID = ?';
+  db.query(sql, [studentId], (err, result) => {
+      if (err) {
+          return res.status(500).send(err);
+      }
+      res.status(200).send('Student deleted successfully.');
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

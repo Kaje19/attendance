@@ -3,6 +3,11 @@ import './Home.css';
 
 function Home() {
     const [events, setEvents] = useState([]);
+    const [students, setStudents] = useState([]);
+    const [showAddEventPopup, setShowAddEventPopup] = useState(false);
+    const [showEditStudentPopup, setShowEditStudentPopup] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [editedStudent, setEditedStudent] = useState({});
 
     useEffect(() => {
         fetch('http://localhost:3001/api/events')
@@ -11,10 +16,12 @@ function Home() {
             .catch(error => console.error('Error fetching events:', error));
     }, []);
 
-    const [students, setStudents] = useState([
-        { id: 1, name: 'Kristine Joy E. Pacatang', course: 'BSIT', yearLevel: 'III', attendanceCount: 3 },
-        // More students can be added here
-    ]);
+    useEffect(() => {
+        fetch('http://localhost:3001/api/students')
+            .then(response => response.json())
+            .then(data => setStudents(data))
+            .catch(error => console.error('Error fetching student list:', error));
+    }, []);
 
     const [finedStudents, setFinedStudents] = useState([
         { id: 1, name: 'Alice Johnson', course: 'BSIT', yearLevel: 'IV', result: 'Fined' }
@@ -24,12 +31,11 @@ function Home() {
         { id: 2, name: 'Bob Smith', course: 'BSCS', yearLevel: 'III', result: 'Unfined' }
     ]);
 
-    const [showPopup, setShowPopup] = useState(false);
     const [newEvent, setNewEvent] = useState({ name: '', venue: '', date: '', time: '' });
 
     const handleAddEvent = () => {
         setNewEvent({ name: '', venue: '', date: '', time: '' });
-        setShowPopup(true);
+        setShowAddEventPopup(true);
     };
 
     const handleSaveEvent = async () => {
@@ -49,7 +55,7 @@ function Home() {
             console.log(result);
     
             setEvents([...events, newEvent]);
-            setShowPopup(false);
+            setShowAddEventPopup(false);
         } catch (error) {
             console.error('Error adding event:', error);
         }
@@ -58,6 +64,65 @@ function Home() {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewEvent({ ...newEvent, [name]: value });
+    };
+
+    const handleEditStudent = (student) => {
+        setEditedStudent({ ...student });
+        setSelectedStudent(student);
+        setShowEditStudentPopup(true);
+    };
+
+    const handleSaveEditedStudent = async () => {
+        try {
+            const response = await fetch(`http://localhost:3001/api/students/${selectedStudent.stud_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(editedStudent),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to save edited student');
+            }
+
+            // Update the students state with the edited student
+            const updatedStudents = students.map(student => {
+                if (student.stud_ID === selectedStudent.stud_ID) {
+                    return editedStudent;
+                }
+                return student;
+            });
+
+            setStudents(updatedStudents);
+            
+            // Close the popup
+            setShowEditStudentPopup(false);
+        } catch (error) {
+            console.error('Error saving edited student:', error);
+        }
+    };
+
+    const handleEditInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditedStudent({ ...editedStudent, [name]: value });
+    };
+
+    const handleDeleteStudent = async (studentId) => {
+        if (window.confirm('Are you sure you want to delete this student?')) {
+            try {
+                const response = await fetch(`http://localhost:3001/api/students/${studentId}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to delete student');
+                }
+
+                // Remove the deleted student from the students state
+                setStudents(students.filter(student => student.id !== studentId));
+            } catch (error) {
+                console.error('Error deleting student:', error);
+            }
+        }
     };
 
     return (
@@ -96,13 +161,13 @@ function Home() {
                             <tbody>
                                 {students.map((student, index) => (
                                     <tr key={index}>
-                                        <td>{student.name}</td>
-                                        <td>{student.course}</td>
-                                        <td>{student.yearLevel}</td>
-                                        <td>{student.attendanceCount}</td>
+                                        <td>{student.stud_Name}</td>
+                                        <td>{student.stud_Course}</td>
+                                        <td>{student.stud_yLevel}</td>
+                                        <td>{student.stud_Attend}</td>
                                         <td>
-                                            <button className="action-buttons edit-button">Edit</button>
-                                            <button className="action-buttons delete-button">Delete</button>
+                                        <button className="action-buttons edit-button" onClick={() => handleEditStudent(student)}>Edit</button>
+                                            <button className="action-buttons delete-button" onClick={() => handleDeleteStudent(student.stud_ID)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -110,6 +175,7 @@ function Home() {
                         </table>
                     </div>
                 </div>
+
                 {/* Fined and Unfined Students List */}
                 <div className="fines-section">
                     <div className="fines-list">
@@ -164,7 +230,7 @@ function Home() {
                 <p>ALL STUDENTS ARE REQUIRED TO HAVE 5 EVENTS!</p>
             </footer>
             
-            {showPopup && (
+            {showAddEventPopup && (
                 <div className="popup">
                     <div className="popup-content">
                         <h2>Add New Event</h2>
@@ -195,7 +261,45 @@ function Home() {
                             onChange={handleInputChange} 
                         />
                         <button onClick={handleSaveEvent}>Save</button>
-                        <button onClick={() => setShowPopup(false)}>Cancel</button>
+                        <button onClick={() => setShowAddEventPopup(false)}>Cancel</button>
+                    </div>
+                </div>
+            )}
+
+            {showEditStudentPopup && (
+                <div className="popup">
+                    <div className="popup-content">
+                        <h2>Edit Student Information</h2>
+                        <input 
+                            type="text" 
+                            name="stud_Name" 
+                            value={editedStudent.stud_Name} 
+                            onChange={handleEditInputChange} 
+                            placeholder="Student Name" 
+                        />
+                        <input 
+                            type="text" 
+                            name="stud_Course" 
+                            value={editedStudent.stud_Course} 
+                            onChange={handleEditInputChange} 
+                            placeholder="Course" 
+                        />
+                        <input 
+                            type="text" 
+                            name="stud_yLevel" 
+                            value={editedStudent.stud_yLevel} 
+                            onChange={handleEditInputChange} 
+                            placeholder="Year Level" 
+                        />
+                        <input 
+                            type="text" 
+                            name="stud_Attend" 
+                            value={editedStudent.stud_Attend} 
+                            onChange={handleEditInputChange} 
+                            placeholder="Attendance Count" 
+                        />
+                        <button onClick={handleSaveEditedStudent}>Save Changes</button>
+                        <button onClick={() => setShowEditStudentPopup(false)}>Cancel</button>
                     </div>
                 </div>
             )}
